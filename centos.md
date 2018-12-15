@@ -1,4 +1,4 @@
-## CENTOS: 增加SWAP的大小
+## 1. CENTOS: 增加SWAP的大小
 
 ### 第一步：关闭SWAP
 
@@ -30,3 +30,20 @@ counter是告诉程序，新的swapfile要多少个block。这里是1024，就�
 
 
 完成。
+
+## 2. 安装mysql8.0
+### 1. Enable the MySQL 8.0 repository with the following command:
+```
+sudo yum localinstall https://dev.mysql.com/get/mysql80-community-release-el7-1.noarch.rpm
+```
+### 2. Install MySQL 8.0 package with yum:
+```
+sudo yum install mysql-community-server
+```
+
+### start mysql
+```
+sudo systemctl enable mysqld
+sudo systemctl start mysqld
+```
+[参考链接含5.7](https://linuxize.com/post/install-mysql-on-centos-7/)
