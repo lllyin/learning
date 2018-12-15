@@ -31,6 +31,7 @@ counter是告诉程序，新的swapfile要多少个block。这里是1024，就�
 
 完成。
 
+
 ## 2. 安装mysql8.0
 ### 1. Enable the MySQL 8.0 repository with the following command:
 ```
@@ -45,5 +46,25 @@ sudo yum install mysql-community-server
 ```
 sudo systemctl enable mysqld
 sudo systemctl start mysqld
+```
+### 查看默认密码
+在启动MySQL服务的时候，主要会发生以下4件事
+
+* MySQL Server初始化并启动起来；
+* MySQL的data文件夹中生成SSL证书和key文件；
+* 密码验证组件被安装并且生效；
+* 创建一个超级管用户'root'@'localhost‘。超级用户设置的密码被保存在错误日志文件中，可以通过以下命令查看：
+```
+sudo grep 'temporary password' /var/log/mysqld.log
+```
+### 修改密码
+```
+ALTER USER 'root'@'localhost' IDENTIFIED BY '{你的密码}';
+```
+### 添加用户 
+> % 允许远程访问
+```
+CREATE USER 'jeffrey'@'%' IDENTIFIED BY 'password';
+The
 ```
 [参考链接含5.7](https://linuxize.com/post/install-mysql-on-centos-7/)
