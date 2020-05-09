@@ -20,7 +20,7 @@ const GEEK_CHAR_MAP = {
   j: `(1 + {})[4]`,
   k: `[20][0]['toString'](32)`,
   l: `('' + (0 == 1))[2]`,
-  m: `('' + {}[0])[1]`,
+  m: `[([1][0]+[1][0])**([1][0]+[1][0])**([1][0]+[1][0])+([1][0]+[1][0])**([1][0]+[1][0])+[1][0]+[1][0]][0]['toString'](32)`,
   n: `('' + {}[0])[([1][0]+[1][0])**([1][0]+[1][0])+1+1]`,
   o: `(1 + {})[([1][0]+[1][0])]`,
   p: `[25][0]['toString'](32)`,
@@ -34,7 +34,7 @@ const GEEK_CHAR_MAP = {
   w: `[32][0]['toString'](36)`,
   x: `[33][0]['toString'](36)`,
   y: `('' + 1 / 0)[7]`,
-  z: `[33][0]['toString'](36)`,
+  z: `[35][0]['toString'](36)`,
   0: 0,
   1: 1,
   '2': `([1][0]+[1][0])`,
@@ -81,4 +81,9 @@ function toGeekString(text) {
 // console.log(toGeekString('h k p q w x z'));
 // console.log(toGeekString('hello world'))
 
-console.log(toGeekString('author: liaolunling at 2020.05.08'));
+// console.log(toGeekString('author: liaolunling at 2020.05.08'));
+// const article = `long long ago, there live a little prince.`;
+
+const alphabet = `abcdefghijklmnopqrstuvwxyz`;
+
+console.log(toGeekString(alphabet));
