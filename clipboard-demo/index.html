@@ -37,42 +37,45 @@
 
       const utils = {
         // 设置剪贴板
-        __setClipboard: function setClipbord(content, opts = {}) {
-          const { success, fail } = opts;
-          const input = document.createElement('input');
-          input.setAttribute('readonly', 'readonly');
-          input.setAttribute('value', content);
-          document.body.appendChild(input);
-          input.select();
-          if (document.execCommand) {
-            document.execCommand('copy');
-            success && success();
-          } else {
-            fail && fail();
-          }
+        UNSAFE_setClipboard: function setClipbord(content, opts = {}) {
+          return new Promise((resove, reject) => {
+            const input = document.createElement('input');
+            input.setAttribute('readonly', 'readonly');
+            input.setAttribute('value', content);
+            document.body.appendChild(input);
+            input.select();
+            if (document.execCommand) {
+              document.execCommand('copy');
+              resove();
+            } else {
+              reject();
+            }
+            document.body.removeChild(input);
+          })
           document.body.removeChild(input);
         },
 
         // 新特性 设置剪贴板
         setClipboard: function (text, opts = {}) {
-          const { success, fail } = opts;
-          try {
-            navigator.clipboard.writeText(text).then(function (res) {
-              success && success(res);
-            }, function (error) {
-              fail && fail(error);
-            });
-          } catch (err) {
-            fail && fail(err);
-          }
+          return new Promise((resolve, reject) => {
+            try {
+              navigator.clipboard.writeText(text).then(function (res) {
+                resolve(res);
+              }, function (error) {
+                reject(error);
+              });
+            } catch (err) {
+              reject(err);
+            }
+          })
         },
 
         // 新特性 读取剪贴板
         readClipboard: function (opts) {
-          const { success, fail } = opts;
-
-          navigator.clipboard.readText().then(
-            clipText => success && success(clipText), err => fail && fail(err));
+          return new Promise((resolve, reject) => {
+            navigator.clipboard.readText().then(
+              clipText => resolve(clipText), err => reject(err));
+          });
         },
 
         // 监听快捷键复制
@@ -96,7 +99,7 @@
       })
 
       document.querySelector('.copy-btn1').addEventListener('click', function () {
-        utils.__setClipboard(`[execCommand]按钮复制${Math.random() * 10}`);
+        utils.UNSAFE_setClipboard(`[execCommand]按钮复制${Math.random() * 10}`);
       })
 
       document.querySelector('.copy-btn2').addEventListener('click', function () {
@@ -104,15 +107,14 @@
       })
 
       document.querySelector('.read-btn').addEventListener('click', function () {
-        utils.readClipboard({
-          success: (content) => {
-            console.log('读取success：', content)
-            document.querySelector('.text').innerHTML = content;
-          },
-          fail: (err) => {
+        utils.readClipboard().then((content) => {
+          console.log('读取success：', content)
+          document.querySelector('.text').innerHTML = content;
+        },
+          (err) => {
             console.log('读取fail：', err)
           }
-        })
+        )
       })
       window.utils = utils;
     })()
