@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>clipbord demo</title>
+</head>
+
+<body>
+  <div class="text">this is text</div>
+
+  <button class="copy-btn1">execCommand复制</button>
+  <button class="copy-btn2">clipboard api复制</button>
+  <button class="read-btn">读取</button>
+  <script>
+
+    (function () {
+      function getOSPlatform() {
+        var OS = '';
+        var OSArray = {};
+        var UserAgent = navigator.userAgent.toLowerCase();
+        OSArray.Windows = (navigator.platform == 'Win32') || (navigator.platform == 'Windows');
+        OSArray.Mac = (navigator.platform == 'Mac68K') || (navigator.platform == 'MacPPC')
+          || (navigator.platform == 'Macintosh') || (navigator.platform == 'MacIntel');
+        OSArray.iphone = UserAgent.indexOf('iPhone') > -1;
+        OSArray.ipod = UserAgent.indexOf('iPod') > -1;
+        OSArray.ipad = UserAgent.indexOf('iPad') > -1;
+        OSArray.Android = UserAgent.indexOf('Android') > -1;
+        for (var i in OSArray) {
+          if (OSArray[i]) {
+            OS = i;
+          }
+        }
+        return OS;
+      }
+
+      const utils = {
+        // 设置剪贴板
+        __setClipboard: function setClipbord(content, opts = {}) {
+          const { success, fail } = opts;
+          const input = document.createElement('input');
+          input.setAttribute('readonly', 'readonly');
+          input.setAttribute('value', content);
+          document.body.appendChild(input);
+          input.select();
+          if (document.execCommand) {
+            document.execCommand('copy');
+            success && success();
+          } else {
+            fail && fail();
+          }
+          document.body.removeChild(input);
+        },
+
+        // 新特性 设置剪贴板
+        setClipboard: function (text, opts = {}) {
+          const { success, fail } = opts;
+          try {
+            navigator.clipboard.writeText(text).then(function (res) {
+              success && success(res);
+            }, function (error) {
+              fail && fail(error);
+            });
+          } catch (err) {
+            fail && fail(err);
+          }
+        },
+
+        // 新特性 读取剪贴板
+        readClipboard: function (opts) {
+          const { success, fail } = opts;
+
+          navigator.clipboard.readText().then(
+            clipText => success && success(clipText), err => fail && fail(err));
+        },
+
+        // 监听快捷键复制
+        listenCopy: function (cb) {
+          window.addEventListener('keydown', function (e) {
+            const isEnterCtrlKey = getOSPlatform() === 'Mac' ? e.metaKey : e.ctrlKey;
+            if (isEnterCtrlKey && e.keyCode === 67) {
+              cb && cb(e);
+            }
+          })
+        }
+      }
+
+      // 写入剪贴板[旧]
+      // utils.listenCopy(() => {
+      //   utils.__setClipboard(`快捷键复制${Math.random() * 10}`);
+      // })
+
+      utils.listenCopy(() => {
+        utils.setClipboard(`[新特性]快捷键复制${Math.random() * 10}`);
+      })
+
+      document.querySelector('.copy-btn1').addEventListener('click', function () {
+        utils.__setClipboard(`[execCommand]按钮复制${Math.random() * 10}`);
+      })
+
+      document.querySelector('.copy-btn2').addEventListener('click', function () {
+        utils.setClipboard(`[Clipboard api]按钮复制${Math.random() * 10}`);
+      })
+
+      document.querySelector('.read-btn').addEventListener('click', function () {
+        utils.readClipboard({
+          success: (content) => {
+            console.log('读取success：', content)
+            document.querySelector('.text').innerHTML = content;
+          },
+          fail: (err) => {
+            console.log('读取fail：', err)
+          }
+        })
+      })
+      window.utils = utils;
+    })()
+  </script>
+</body>
+
+</html>
