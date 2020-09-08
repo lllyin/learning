@@ -63,3 +63,22 @@ cat file1 >> file2
 
 cat -e file
 ```
+
+
+## 4. Mac针对没有语言设置选项的app修改默认语言
+1. 查看app包名
+
+    语法：osascript -e 'id of app "App名"'
+    ```sh
+      // 例如Finder com.apple.finder
+      osascript -e 'id of app "Finder"'
+
+      // 例如企业微信 com.tencent.WeWorkMac
+      osascript -e 'id of app "企业微信"'
+    ```
+
+2. 打开终端，在Terminal运行下面的命令。将包名替换成步骤一的即可。
+    ```sh
+    defaults write com.tencent.WeWorkMac AppleLanguages '("zh-CN")'
+    ```
+3. 重启app
